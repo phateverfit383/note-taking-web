@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://note-taking-app-one-phi.vercel.app
+
+# Sitemaps
+Sitemap: https://note-taking-app-one-phi.vercel.app/sitemap.xml

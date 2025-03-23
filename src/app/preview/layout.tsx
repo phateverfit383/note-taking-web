@@ -1,11 +1,11 @@
-import { Metadata } from "next";
-import * as React from "react";
+import { Metadata } from 'next';
+import * as React from 'react';
 
-import "@/styles/colors.css";
+import '@/styles/colors.css';
 
 export const metadata: Metadata = {
-  title: "Preview",
-  description: "Preview",
+  title: 'Preview',
+  description: 'Preview',
 };
 
 export default function PreviewLayout({

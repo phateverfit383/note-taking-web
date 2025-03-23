@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login } from "../api/login/route";
+import { login } from "@/services/account/request";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");

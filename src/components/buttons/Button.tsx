@@ -1,7 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import * as React from 'react';
 import { IconType } from 'react-icons';
-import { ImSpinner2 } from 'react-icons/im';
 
 import { cn } from '@/lib/utils';
 
@@ -109,31 +108,29 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
                 'text-primary-500': ['outline', 'ghost'].includes(variant),
               }
             )}
-          >
-            <ImSpinner2 className='animate-spin' />
-          </div>
+          ></div>
         )}
-        {LeftIcon && (
+        {/* {LeftIcon && (
           <div
             className={cn([
-              size === 'base' && 'mr-1',
-              size === 'sm' && 'mr-1.5',
+              size === "base" && "mr-1",
+              size === "sm" && "mr-1.5",
             ])}
           >
             <LeftIcon
-              size='1em'
+              size="1em"
               className={cn(
                 [
-                  size === 'base' && 'md:text-md text-md',
-                  size === 'sm' && 'md:text-md text-sm',
+                  size === "base" && "md:text-md text-md",
+                  size === "sm" && "md:text-md text-sm",
                 ],
                 classNames?.leftIcon
               )}
             />
           </div>
-        )}
+        )} */}
         {children}
-        {RightIcon && (
+        {/* {RightIcon && (
           <div
             className={cn([
               size === 'base' && 'ml-1',
@@ -151,7 +148,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               )}
             />
           </div>
-        )}
+        )} */}
       </button>
     );
   }

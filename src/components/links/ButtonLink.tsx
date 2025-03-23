@@ -99,7 +99,7 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           className
         )}
       >
-        {LeftIcon && (
+        {/* {LeftIcon && (
           <div
             className={cn([
               size === 'base' && 'mr-1',
@@ -117,9 +117,9 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               )}
             />
           </div>
-        )}
+        )} */}
         {children}
-        {RightIcon && (
+        {/* {RightIcon && (
           <div
             className={cn([
               size === 'base' && 'ml-1',
@@ -137,7 +137,7 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
               )}
             />
           </div>
-        )}
+        )} */}
       </UnstyledLink>
     );
   }

@@ -1,39 +1,39 @@
-"use client";
+'use client';
 
-import clsx from "clsx";
-import { Check, Plus } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import clsx from 'clsx';
+import { Check, Plus } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import {
   searchNotes,
   createNote,
   updateNote,
   deleteNote,
-} from "../api/notes/route";
-import { Note } from "../api/notes/type";
-import MarkdownEditor from "@/components/markdown/MarkdownEditor";
-import ConfirmationPopup from "@/components/popup/confirm";
-import { removeToken } from "@/lib/storage";
-import { useRouter } from "next/navigation";
-import { toast } from "react-toastify";
+} from '@/services/notes/request';
+import { Note } from '@/services/notes/type';
+import MarkdownEditor from '@/components/markdown/MarkdownEditor';
+import ConfirmationPopup from '@/components/popup/confirm';
+import { removeToken } from '@/lib/storage';
+import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 export default function NotesPage() {
-  const [markdown, setMarkdown] = useState("");
+  const [markdown, setMarkdown] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notes, setNotes] = useState<Note[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-  const [noteTitle, setNoteTitle] = useState("");
-  const [search, setSearch] = useState("");
+  const [noteTitle, setNoteTitle] = useState('');
+  const [search, setSearch] = useState('');
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
   const router = useRouter();
 
   const createNoteHandler = async () => {
-    console.log("createNoteHandler", noteTitle);
+    console.log('createNoteHandler', noteTitle);
     if (selectedNote) {
       await updateNote(selectedNote._id, noteTitle, markdown);
     } else {
-      console.log("createNoteHandler", noteTitle, markdown);
+      console.log('createNoteHandler', noteTitle, markdown);
       const res = await createNote(noteTitle, markdown);
-      console.log("res", res);
+      console.log('res', res);
       setNotes([...notes, res]);
     }
   };
@@ -59,8 +59,8 @@ export default function NotesPage() {
         setNoteTitle(notes[0].title);
         setMarkdown(notes[0].content);
       } else {
-        setNoteTitle("");
-        setMarkdown("");
+        setNoteTitle('');
+        setMarkdown('');
         setSelectedNote(null);
       }
     }
@@ -72,7 +72,7 @@ export default function NotesPage() {
     navigator.clipboard.writeText(
       `${process.env.NEXT_PUBLIC_APP_URL}/preview?slug=${selectedNote?.slug}`
     );
-    toast.success("Copied to clipboard");
+    toast.success('Copied to clipboard');
   };
 
   // after 300ms of no change, search notes
@@ -87,39 +87,39 @@ export default function NotesPage() {
 
   // initial load
   useEffect(() => {
-    searchNotes().then((res) => {
+    searchNotes(undefined).then((res) => {
       setNotes(res);
     });
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      <div className="flex">
+    <div className='min-h-screen bg-gray-900 text-white'>
+      <div className='flex'>
         {/* Sidebar */}
-        <div className="w-1/4 p-6 border-r border-gray-700">
-          <div className="mb-6">
+        <div className='w-1/4 p-6 border-r border-gray-700'>
+          <div className='mb-6'>
             <input
-              type="text"
-              placeholder="Search all components"
-              className="w-full p-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              type='text'
+              placeholder='Search all components'
+              className='w-full p-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500'
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <ul className="space-y-2">
+          <ul className='space-y-2'>
             <li
-              className="text-gray-400 flex items-center gap-2"
+              className='text-gray-400 flex items-center gap-2'
               onClick={() => {
                 setSelectedNote(null);
-                setNoteTitle("");
-                setMarkdown("");
+                setNoteTitle('');
+                setMarkdown('');
               }}
             >
               <Plus /> New Note
             </li>
             {notes.map((note) => (
               <li
-                className="text-gray-400"
+                className='text-gray-400'
                 onClick={() => selectNoteHandler(note)}
                 key={note._id}
               >
@@ -130,54 +130,54 @@ export default function NotesPage() {
         </div>
 
         {/* Main Content */}
-        <div className="w-3/4 p-6">
-          <div className="flex justify-end items-center mb-4">
+        <div className='w-3/4 p-6'>
+          <div className='flex justify-end items-center mb-4'>
             <button
-              className="p-2 bg-red-600 rounded hover:bg-red-500"
+              className='p-2 bg-red-600 rounded hover:bg-red-500'
               onClick={() => {
                 removeToken();
-                router.push("/login");
+                router.push('/login');
               }}
             >
-              <span className="text-white">Logout</span>
+              <span className='text-white'>Logout</span>
             </button>
           </div>
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex space-x-2 w-full mr-4">
+          <div className='flex justify-between items-center mb-4'>
+            <div className='flex space-x-2 w-full mr-4'>
               <input
-                type="text"
-                className="w-full p-2 bg-gray-800  rounded text-white"
+                type='text'
+                className='w-full p-2 bg-gray-800  rounded text-white'
                 value={noteTitle}
                 onChange={(e) => setNoteTitle(e.target.value)}
               />
             </div>
-            <div className="flex space-x-2">
+            <div className='flex space-x-2'>
               <button
-                className="p-2 bg-gray-800 rounded hover:bg-gray-700"
+                className='p-2 bg-gray-800 rounded hover:bg-gray-700'
                 onClick={() => createNoteHandler()}
               >
-                <span className="text-green-500">Save</span>
+                <span className='text-green-500'>Save</span>
               </button>
               {selectedNote && (
                 <>
                   <button
-                    className="p-2 bg-gray-800 rounded hover:bg-gray-700"
+                    className='p-2 bg-gray-800 rounded hover:bg-gray-700'
                     onClick={() => shareNoteHandler()}
                   >
-                    <span className="text-gray-400">Share</span>
+                    <span className='text-gray-400'>Share</span>
                   </button>
                   <button
-                    className="p-2 bg-red-600 rounded hover:bg-red-500"
+                    className='p-2 bg-red-600 rounded hover:bg-red-500'
                     onClick={() => openConfirmationPopup()}
                   >
-                    <span className="text-white">Delete</span>
+                    <span className='text-white'>Delete</span>
                   </button>
                 </>
               )}
             </div>
           </div>
           {/* Content */}
-          <div className="flex space-x-4">
+          <div className='flex space-x-4'>
             <MarkdownEditor text={markdown} onChange={setMarkdown} />
           </div>
         </div>
@@ -187,8 +187,8 @@ export default function NotesPage() {
         isOpen={isConfirmationPopupOpen}
         onClose={() => setIsConfirmationPopupOpen(false)}
         onConfirm={() => deleteNoteHandler()}
-        title="Confirm"
-        message="Are you sure you want to delete this note?"
+        title='Confirm'
+        message='Are you sure you want to delete this note?'
       />
     </div>
   );
