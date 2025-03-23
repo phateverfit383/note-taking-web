@@ -12,7 +12,9 @@ import {
 import { Note } from "../api/notes/type";
 import MarkdownEditor from "@/components/markdown/MarkdownEditor";
 import ConfirmationPopup from "@/components/popup/confirm";
-
+import { removeToken } from "@/lib/storage";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 export default function NotesPage() {
   const [markdown, setMarkdown] = useState("");
   const [loading, setLoading] = useState(true);
@@ -22,6 +24,7 @@ export default function NotesPage() {
   const [noteTitle, setNoteTitle] = useState("");
   const [search, setSearch] = useState("");
   const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
+  const router = useRouter();
 
   const createNoteHandler = async () => {
     console.log("createNoteHandler", noteTitle);
@@ -61,6 +64,15 @@ export default function NotesPage() {
         setSelectedNote(null);
       }
     }
+  };
+
+  // handle share note
+  const shareNoteHandler = async () => {
+    // copy to clipboard
+    navigator.clipboard.writeText(
+      `${process.env.NEXT_PUBLIC_APP_URL}/preview?slug=${selectedNote?.slug}`
+    );
+    toast.success("Copied to clipboard");
   };
 
   // after 300ms of no change, search notes
@@ -119,6 +131,17 @@ export default function NotesPage() {
 
         {/* Main Content */}
         <div className="w-3/4 p-6">
+          <div className="flex justify-end items-center mb-4">
+            <button
+              className="p-2 bg-red-600 rounded hover:bg-red-500"
+              onClick={() => {
+                removeToken();
+                router.push("/login");
+              }}
+            >
+              <span className="text-white">Logout</span>
+            </button>
+          </div>
           <div className="flex justify-between items-center mb-4">
             <div className="flex space-x-2 w-full mr-4">
               <input
@@ -137,7 +160,10 @@ export default function NotesPage() {
               </button>
               {selectedNote && (
                 <>
-                  <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
+                  <button
+                    className="p-2 bg-gray-800 rounded hover:bg-gray-700"
+                    onClick={() => shareNoteHandler()}
+                  >
                     <span className="text-gray-400">Share</span>
                   </button>
                   <button

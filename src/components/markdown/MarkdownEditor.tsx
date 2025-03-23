@@ -1,4 +1,4 @@
-import { MdEditor } from "md-editor-rt";
+import { MdEditor, MdPreview } from "md-editor-rt";
 import "md-editor-rt/lib/style.css";
 import React from "react";
 import { useEffect } from "react";
@@ -7,11 +7,12 @@ import { useState } from "react";
 type MarkdownEditorProps = {
   children?: React.ReactNode;
   text: string;
-  onChange: (text: string) => void;
+  onChange?: (text: string) => void;
+  isPreview?: boolean;
 };
 
 const MarkdownEditor = React.forwardRef<HTMLButtonElement, MarkdownEditorProps>(
-  ({ children, text, onChange }, ref) => {
+  ({ children, text, onChange, isPreview }, ref) => {
     const [isMounted, setIsMounted] = useState(false);
 
     useEffect(() => {
@@ -19,6 +20,18 @@ const MarkdownEditor = React.forwardRef<HTMLButtonElement, MarkdownEditorProps>(
     }, []);
     if (!isMounted) {
       return <div>Loading editor...</div>;
+    }
+    if (isPreview) {
+      return (
+        <div className="w-full h-full">
+          <MdPreview
+            value={text}
+            theme="dark"
+            language="en-US"
+            className="p-4"
+          />
+        </div>
+      );
     }
     return (
       <div className="w-full h-full">

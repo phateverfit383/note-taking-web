@@ -5,6 +5,7 @@ import "@/styles/globals.css";
 import "@/styles/colors.css";
 
 import { siteConfig } from "@/constant/config";
+import { ToastContainer } from "react-toastify";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -29,7 +30,10 @@ export default function RootLayout({
 }) {
   return (
     <html>
-      <body>{children}</body>
+      <body>
+        {children}
+        <ToastContainer />
+      </body>
     </html>
   );
 }
