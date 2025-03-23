@@ -1,27 +1,85 @@
 "use client";
 
 import clsx from "clsx";
-import {
-  ArrowRight,
-  CreditCard,
-  Laptop,
-  Phone,
-  Plus,
-  Shield,
-} from "lucide-react";
+import { Check, Plus } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { searchNotes } from "../api/notes/route";
+import {
+  searchNotes,
+  createNote,
+  updateNote,
+  deleteNote,
+} from "../api/notes/route";
+import { Note } from "../api/notes/type";
+import MarkdownEditor from "@/components/markdown/MarkdownEditor";
+import ConfirmationPopup from "@/components/popup/confirm";
 
 export default function NotesPage() {
   const [markdown, setMarkdown] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
+  const [noteTitle, setNoteTitle] = useState("");
+  const [search, setSearch] = useState("");
+  const [isConfirmationPopupOpen, setIsConfirmationPopupOpen] = useState(false);
 
+  const createNoteHandler = async () => {
+    console.log("createNoteHandler", noteTitle);
+    if (selectedNote) {
+      await updateNote(selectedNote._id, noteTitle, markdown);
+    } else {
+      console.log("createNoteHandler", noteTitle, markdown);
+      const res = await createNote(noteTitle, markdown);
+      console.log("res", res);
+      setNotes([...notes, res]);
+    }
+  };
+
+  const selectNoteHandler = (note: Note) => {
+    setSelectedNote(note);
+    setNoteTitle(note.title);
+    setMarkdown(note.content);
+  };
+
+  const openConfirmationPopup = () => {
+    setIsConfirmationPopupOpen(true);
+  };
+
+  // handle delete note
+  const deleteNoteHandler = async () => {
+    setIsConfirmationPopupOpen(false);
+    if (selectedNote) {
+      await deleteNote(selectedNote._id);
+      setNotes(notes.filter((note) => note._id !== selectedNote._id));
+      if (notes.length > 0) {
+        setSelectedNote(notes[0]);
+        setNoteTitle(notes[0].title);
+        setMarkdown(notes[0].content);
+      } else {
+        setNoteTitle("");
+        setMarkdown("");
+        setSelectedNote(null);
+      }
+    }
+  };
+
+  // after 300ms of no change, search notes
   useEffect(() => {
-    searchNotes("The Hobbit").then((res) => {
-      console.log(res);
+    const timeout = setTimeout(() => {
+      searchNotes(search).then((res) => {
+        setNotes(res);
+      });
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  // initial load
+  useEffect(() => {
+    searchNotes().then((res) => {
+      setNotes(res);
     });
   }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="flex">
@@ -32,115 +90,80 @@ export default function NotesPage() {
               type="text"
               placeholder="Search all components"
               className="w-full p-2 bg-gray-800 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <ul className="space-y-2">
-            <li className="text-gray-400">Setting up the database</li>
-            <li className="text-gray-400">Second one</li>
-            <li className="text-blue-400 font-semibold">The Hobbit</li>
-            <li className="text-gray-400">The Grapes of Wrath</li>
-            <li className="text-gray-400">Hamlet</li>
-            <li className="text-gray-400">Life of PI</li>
-            <li className="text-gray-400">Frankenstein</li>
-            <li className="text-gray-400">The War of the Worlds</li>
-            <li className="text-gray-400">Pride and Prejudice</li>
-            <li className="text-gray-400">Grimms' Fairy Tales</li>
-            <li className="text-gray-400">The Thirty-Nine Steps</li>
-            <li className="text-gray-400">His Dark Materials</li>
-            <li className="text-gray-400">A Brief History of Time</li>
-            <li className="text-gray-400">Jude the Obscure</li>
-            <li className="text-gray-400">The Lord of the Rings</li>
+            <li
+              className="text-gray-400 flex items-center gap-2"
+              onClick={() => {
+                setSelectedNote(null);
+                setNoteTitle("");
+                setMarkdown("");
+              }}
+            >
+              <Plus /> New Note
+            </li>
+            {notes.map((note) => (
+              <li
+                className="text-gray-400"
+                onClick={() => selectNoteHandler(note)}
+                key={note._id}
+              >
+                {note.title}
+              </li>
+            ))}
           </ul>
         </div>
 
         {/* Main Content */}
         <div className="w-3/4 p-6">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">The Hobbit</h1>
+            <div className="flex space-x-2 w-full mr-4">
+              <input
+                type="text"
+                className="w-full p-2 bg-gray-800  rounded text-white"
+                value={noteTitle}
+                onChange={(e) => setNoteTitle(e.target.value)}
+              />
+            </div>
             <div className="flex space-x-2">
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">B</span>
+              <button
+                className="p-2 bg-gray-800 rounded hover:bg-gray-700"
+                onClick={() => createNoteHandler()}
+              >
+                <span className="text-green-500">Save</span>
               </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">I</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">U</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">HR</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">S</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">T</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">V</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">E</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">P</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">M</span>
-              </button>
-              <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
-                <span className="text-gray-400">Share</span>
-              </button>
-              <button className="p-2 bg-red-600 rounded hover:bg-red-500">
-                <span className="text-white">Delete</span>
-              </button>
+              {selectedNote && (
+                <>
+                  <button className="p-2 bg-gray-800 rounded hover:bg-gray-700">
+                    <span className="text-gray-400">Share</span>
+                  </button>
+                  <button
+                    className="p-2 bg-red-600 rounded hover:bg-red-500"
+                    onClick={() => openConfirmationPopup()}
+                  >
+                    <span className="text-white">Delete</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
           {/* Content */}
           <div className="flex space-x-4">
-            <div className="w-1/2">
-              <p className="mb-4">
-                I felt these films had “too much,” whether it was all the added
-                sideplots, action, new characters, or even the “CGI”. As a huge
-                fan of J.R.R. Tolkien’s book, I decided to edit these movies
-                down to match closer to what was written while also rectifying
-                many common critiques. This project is for both the purist and
-                casual fans alike, with the end result providing a more focused
-                narrative that I find more enjoyable and emotionally impactful.
-              </p>
-              <p>
-                — I initially edited with the book at my side, page by page,
-                starting on June 19th, 2019 — After numerous revisions to make
-                the edit seamless for general audiences and feel as professional
-                as possible, I finished on December 24th, 2021. I also worked on
-                two last revision, one in September 2023 and one released in
-                June the 2024, where I am now fully satisfied with the cut after
-                many years of work.
-              </p>
-            </div>
-            <div className="w-1/2">
-              <p className="mb-4">
-                I felt these films had “too much,” whether it was all the added
-                sideplots, action, new characters, or even the “CGI”. As a huge
-                fan of J.R.R. Tolkien’s book, I decided to edit these movies
-                down to match closer to what was written while also rectifying
-                many common critiques. This project is for both the purist and
-                casual fans alike, with the end result providing a more focused
-                narrative that I find more enjoyable and emotionally impactful.
-              </p>
-              <p>
-                I initially edited with the book at my side, page by page,
-                starting on June 19th, 2019. After numerous revisions to make
-                the edit seamless for general audiences and feel as professional
-                as possible, I finished on December 24th, 2021. I also worked on
-                two last revision, one in September 2023 and one released in
-                June the 2024, where I am now fully satisfied with the cut after
-                many years of work.
-              </p>
-            </div>
+            <MarkdownEditor text={markdown} onChange={setMarkdown} />
           </div>
         </div>
       </div>
+
+      <ConfirmationPopup
+        isOpen={isConfirmationPopupOpen}
+        onClose={() => setIsConfirmationPopupOpen(false)}
+        onConfirm={() => deleteNoteHandler()}
+        title="Confirm"
+        message="Are you sure you want to delete this note?"
+      />
     </div>
   );
 }
