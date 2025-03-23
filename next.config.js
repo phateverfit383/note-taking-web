@@ -3,6 +3,9 @@ const nextConfig = {
   eslint: {
     dirs: ['src'],
   },
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 
   reactStrictMode: true,
   swcMinify: true,

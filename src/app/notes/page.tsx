@@ -15,6 +15,7 @@ import ConfirmationPopup from '@/components/popup/confirm';
 import { removeToken } from '@/lib/storage';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import { NEXT_PUBLIC_APP_URL } from '@/constant/env';
 export default function NotesPage() {
   const [markdown, setMarkdown] = useState('');
   const [loading, setLoading] = useState(true);
@@ -70,7 +71,7 @@ export default function NotesPage() {
   const shareNoteHandler = async () => {
     // copy to clipboard
     navigator.clipboard.writeText(
-      `${process.env.NEXT_PUBLIC_APP_URL}/preview?slug=${selectedNote?.slug}`
+      `${NEXT_PUBLIC_APP_URL}/preview?slug=${selectedNote?.slug}`
     );
     toast.success('Copied to clipboard');
   };
