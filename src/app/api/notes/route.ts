@@ -1,15 +1,19 @@
 import { API_URL } from "@/constant/env";
+import { Note } from "./type";
 
-export async function searchNotes(search: string) {
-  const res = await fetch(`${API_URL}/notes/search?search=${search}`);
+export async function searchNotes(search: string): Promise<Note[]> {
+  const res = await fetch(`${API_URL}/notes?q=${search}`);
   const data = await res.json();
   return data;
 }
 
-export async function createNote(title: string, content: string) {
+export async function createNote(title: string) {
+  const body = {
+    title,
+  };
   const res = await fetch(`${API_URL}/notes`, {
     method: "POST",
-    body: JSON.stringify({ title, content }),
+    body: JSON.stringify(body),
   });
   const data = await res.json();
   return data;
