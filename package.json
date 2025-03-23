@@ -20,6 +20,7 @@
   "dependencies": {
     "clsx": "^2.0.0",
     "lucide-react": "^0.438.0",
+    "md-editor-rt": "^5.4.4",
     "next": "^14.2.23",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -35,7 +36,6 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^15.0.7",
     "@types/react": "^18.3.18",
-    "@types/testing-library__jest-dom": "^5.14.9",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "autoprefixer": "^10.4.20",
